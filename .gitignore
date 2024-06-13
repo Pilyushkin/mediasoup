@@ -41,3 +41,7 @@
 
 # Packaged module.
 *.tgz
+
+##CMake
+cmake-build-release/*
+cmake-build-debug/*
