@@ -185,9 +185,6 @@ FetchContent_Declare(
         FIND_PACKAGE_ARGS NAMES OpenSSL 3
 )
 
-if(MEDIASOUP_INSTALL) #todo ?
-    set(JSON_Install ON)
-endif()
 FetchContent_Declare(
         nlohmann_json
         URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz
@@ -220,9 +217,6 @@ FetchContent_Declare(
         FIND_PACKAGE_ARGS NAMES usrsctp
 )
 
-if(MEDIASOUP_INSTALL)
-    set(ABSL_ENABLE_INSTALL ON)
-endif()
 set(ABSL_PROPAGATE_CXX_STD ON)
 FetchContent_Declare(
         abseil_cpp
@@ -423,62 +417,4 @@ if (MEDIASOUP_BUILD_TESTS)
         add_test(NAME ${FUZZER_TARGET} COMMAND ${FUZZER_TARGET} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
     endif ()
-endif ()
-
-if (MEDIASOUP_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES #[[AND OFF]])
-    # Не получается сделать установку, так как у подпроектов нет install(EXPORT)
-    #CMake Error: install(EXPORT "MediasoupTargets" ...) includes target "libmediasoup-worker" which requires target "usrsctp" that is not in any export set.
-    #CMake Error: install(EXPORT "MediasoupTargets" ...) includes target "libmediasoup-worker" which requires target "libwebrtc" that is not in any export set.
-
-    set(MEDIASOUP_COMPONENT ${LIBRARY_TARGET})
-    set(MEDIASOUP_DEV_COMPONENT ${MEDIASOUP_COMPONENT}-dev)
-
-    include(GNUInstallDirs)
-
-    set(LIBRARY_TARGET_EXPORT MediasoupTargets)
-    install(TARGETS ${LIBRARY_TARGET}
-            EXPORT ${LIBRARY_TARGET_EXPORT}
-            RUNTIME COMPONENT ${MEDIASOUP_COMPONENT}
-            LIBRARY COMPONENT ${MEDIASOUP_COMPONENT}
-            ARCHIVE COMPONENT ${MEDIASOUP_DEV_COMPONENT}
-            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR/${LIBRARY_NAMESPACE}}
-            )
-
-    set(EXPORTS_PATH "${CMAKE_INSTALL_LIBDIR}/${LIBRARY_NAMESPACE}/cmake")
-
-    install(EXPORT ${LIBRARY_TARGET_EXPORT}
-            DESTINATION ${EXPORTS_PATH}
-            NAMESPACE ${LIBRARY_NAMESPACE}::
-            )
-
-    include(CMakePackageConfigHelpers)
-    set(LIBRARY_TARGET_EXPORT_PATH ${EXPORTS_PATH}/${LIBRARY_TARGET_EXPORT}.cmake)
-    configure_package_config_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/MediasoupConfig.cmake.in
-            "${CMAKE_CURRENT_BINARY_DIR}/MediasoupConfig.cmake"
-            INSTALL_DESTINATION ${EXPORTS_PATH}
-            PATH_VARS
-            LIBRARY_TARGET_EXPORT_PATH
-            MEDIASOUP_COMPONENT
-            MEDIASOUP_DEV_COMPONENT
-    )
-
-    install(
-            FILES "${CMAKE_CURRENT_BINARY_DIR}/MediasoupConfig.cmake"
-            DESTINATION ${EXPORTS_PATH}
-    )
-
-    write_basic_package_version_file(
-            "${CMAKE_CURRENT_BINARY_DIR}/MediasoupConfigVersion.cmake"
-            COMPATIBILITY ExactVersion
-    )
-
-    install(
-            FILES "${CMAKE_CURRENT_BINARY_DIR}/MediasoupConfigVersion.cmake"
-            DESTINATION ${EXPORTS_PATH}
-            )
-
-    # todo  Install.md with components list
-
-    #todo package option?
 endif ()
