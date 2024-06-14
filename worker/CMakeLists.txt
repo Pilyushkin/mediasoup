@@ -218,12 +218,13 @@ FetchContent_Declare(
 )
 
 set(ABSL_PROPAGATE_CXX_STD ON)
+option(ABSL_BUILD_TESTING OFF)
 FetchContent_Declare(
         abseil_cpp
         URL https://github.com/abseil/abseil-cpp/archive/20220623.0.tar.gz
         DOWNLOAD_NAME abseil-cpp-20220623.0.tar.gz
-        URL_HASH SHA256=d19cb16610d9310658a815ebcd87a9e2966aafbd57964341c0d1a3a3778c03b6
-        FIND_PACKAGE_ARGS NAMES absl 20220623
+        URL_HASH SHA256=4208129b49006089ba1d6710845a45e31c59b0ab6bff9e5788a87f55c5abd602
+#        FIND_PACKAGE_ARGS NAMES absl 20220623
 )
 
 
