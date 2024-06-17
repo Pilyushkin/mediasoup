@@ -183,26 +183,33 @@ include(FetchContent)
 set(OPENSSL_USE_STATIC_LIBS ON)
 find_package(OpenSSL 3 REQUIRED)
 
+set(NLOHMANN_JSON_URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz CACHE STRING "nlohmann json url")
+message(STATUS "Nlohmann json url: ${NLOHMANN_JSON_URL}")
 FetchContent_Declare(
         nlohmann_json
-        URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz
+        URL ${NLOHMANN_JSON_URL}
         DOWNLOAD_NAME nlohmann_json-3.10.5.zip
         FIND_PACKAGE_ARGS NAMES nlohmann_json 3.10
 )
 
-FetchContent_Declare(
-        libuv
-        URL
+set(LIBUV_URL
         https://dist.libuv.org/dist/v1.44.2/libuv-v1.44.2.tar.gz
         https://github.com/mesonbuild/wrapdb/releases/download/libuv_1.44.2-2/libuv-v1.44.2.tar.gz
+        CACHE STRING "libuv source path")
+message(STATUS "Libuv path: ${LIBUV_URL}")
+FetchContent_Declare(
+        libuv
+        URL ${LIBUV_URL}
         FIND_PACKAGE_ARGS NAMES uv_a 1.44
 )
 
 set(TEST_APPS OFF)
 option(BUILD_WITH_WARNINGS OFF)
+set(LIBSRTP2_URL https://github.com/cisco/libsrtp/archive/refs/tags/v2.5.0.tar.gz CACHE STRING "libsrtp2 url")
+message(STATUS "Libsrtp2 url: ${LIBSRTP2_URL}")
 FetchContent_Declare(
         libsrtp2
-        URL https://github.com/cisco/libsrtp/archive/refs/tags/v2.5.0.tar.gz
+        URL ${LIBSRTP2_URL}
         DOWNLOAD_NAME libsrtp-2.5.0.tar.gz
         URL_HASH SHA256=8a43ef8e9ae2b665292591af62aa1a4ae41e468b6d98d8258f91478735da4e09
         FIND_PACKAGE_ARGS NAMES libSRTP
@@ -210,18 +217,22 @@ FetchContent_Declare(
 
 option(sctp_build_programs OFF)
 option(sctp_werror OFF)
+set(USRSCTP_URL https://github.com/sctplab/usrsctp/archive/4e06feb01cadcd127d119486b98a4bd3d64aa1e7.zip CACHE STRING "usrsctp url")
+message(STATUS "Usrsctp url: ${USRSCTP_URL}")
 FetchContent_Declare(
         usrsctp
-        URL https://github.com/sctplab/usrsctp/archive/4e06feb01cadcd127d119486b98a4bd3d64aa1e7.zip
+        URL ${USRSCTP_URL}
         URL_HASH SHA256=15f7844c4c4ca93228ae0fe844182c72edd1d809b461cb97b1bb687a804dd4fc
         FIND_PACKAGE_ARGS NAMES usrsctp
 )
 
 set(ABSL_PROPAGATE_CXX_STD ON)
 option(ABSL_BUILD_TESTING OFF)
+set(ABSEIL_CPP_URL https://github.com/abseil/abseil-cpp/archive/20220623.0.tar.gz CACHE STRING "abseil_cpp url")
+message(STATUS "Abseil_cpp url: ${ABSEIL_CPP_URL}")
 FetchContent_Declare(
         abseil_cpp
-        URL https://github.com/abseil/abseil-cpp/archive/20220623.0.tar.gz
+        URL ${ABSEIL_CPP_URL}
         DOWNLOAD_NAME abseil-cpp-20220623.0.tar.gz
         URL_HASH SHA256=4208129b49006089ba1d6710845a45e31c59b0ab6bff9e5788a87f55c5abd602
         #        FIND_PACKAGE_ARGS NAMES absl 20220623
@@ -255,9 +266,11 @@ list(
 )
 
 if (MSVC)
+    set(WINGETOPT_URL https://github.com/alex85k/wingetopt/archive/v1.00.zip CACHE STRING "wingetopt url")
+    message(STATUS "wingetopt url: ${WINGETOPT_URL}")
     FetchContent_Declare(
             wingetopt
-            URL https://github.com/alex85k/wingetopt/archive/v1.00.zip
+            URL ${WINGETOPT_URL}
             DOWNLOAD_NAME wingetopt-1.00.zip
             URL_HASH SHA256=4454ca03a59702a4ca4d1488ca8fa6168b0c8d77dc739a6fe2825c3dd8609d87
     )
