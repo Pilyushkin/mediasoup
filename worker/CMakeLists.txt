@@ -1,4 +1,8 @@
-set(CMAKE_CXX_STANDARD 17)
+if (MSVC)
+    set(CMAKE_CXX_STANDARD 14) #With 17 link error on Windows (absl)
+else ()
+    set(CMAKE_CXX_STANDARD 17)
+endif ()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -11,9 +15,9 @@ endif ()
 message(STATUS "Endianness: ${CMAKE_CXX_BYTE_ORDER}")
 if (${CMAKE_CXX_BYTE_ORDER} STREQUAL LITTLE_ENDIAN)
     list(APPEND TARGET_COMPILE_DEFINITIONS MS_LITTLE_ENDIAN)
-elseif()
+elseif ()
     list(APPEND TARGET_COMPILE_DEFINITIONS MS_BIG_ENDIAN)
-endif()
+endif ()
 
 if (MSVC)
     list(APPEND TARGET_COMPILE_DEFINITIONS
@@ -177,13 +181,7 @@ list(APPEND PUBLIC_HEADER
 include(FetchContent)
 
 set(OPENSSL_USE_STATIC_LIBS ON)
-#todo Local path openssl
-#find_package(OpenSSL 3 REQUIRED) #todo remove fetchContent for openssl
-FetchContent_Declare(
-        openssl-cmake
-        URL https://github.com/jimmy-park/openssl-cmake/archive/main.tar.gz
-        FIND_PACKAGE_ARGS NAMES OpenSSL 3
-)
+find_package(OpenSSL 3 REQUIRED)
 
 FetchContent_Declare(
         nlohmann_json
@@ -201,6 +199,7 @@ FetchContent_Declare(
 )
 
 set(TEST_APPS OFF)
+option(BUILD_WITH_WARNINGS OFF)
 FetchContent_Declare(
         libsrtp2
         URL https://github.com/cisco/libsrtp/archive/refs/tags/v2.5.0.tar.gz
@@ -210,6 +209,7 @@ FetchContent_Declare(
 )
 
 option(sctp_build_programs OFF)
+option(sctp_werror OFF)
 FetchContent_Declare(
         usrsctp
         URL https://github.com/sctplab/usrsctp/archive/4e06feb01cadcd127d119486b98a4bd3d64aa1e7.zip
@@ -224,12 +224,11 @@ FetchContent_Declare(
         URL https://github.com/abseil/abseil-cpp/archive/20220623.0.tar.gz
         DOWNLOAD_NAME abseil-cpp-20220623.0.tar.gz
         URL_HASH SHA256=4208129b49006089ba1d6710845a45e31c59b0ab6bff9e5788a87f55c5abd602
-#        FIND_PACKAGE_ARGS NAMES absl 20220623
+        #        FIND_PACKAGE_ARGS NAMES absl 20220623
 )
 
 
 FetchContent_MakeAvailable(
-        openssl-cmake
         nlohmann_json
         libuv
         libsrtp2
@@ -242,8 +241,6 @@ list(APPEND MEDIASOUP_INCLUDE_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
 
-add_subdirectory(deps/libwebrtc)
-
 list(
         APPEND MEDIASOUP_DEPENDENCIES
         OpenSSL::SSL
@@ -255,7 +252,6 @@ list(
         absl::base
         absl::strings
         absl::flat_hash_map
-        libwebrtc::libwebrtc
 )
 
 if (MSVC)
@@ -265,13 +261,24 @@ if (MSVC)
             DOWNLOAD_NAME wingetopt-1.00.zip
             URL_HASH SHA256=4454ca03a59702a4ca4d1488ca8fa6168b0c8d77dc739a6fe2825c3dd8609d87
     )
+    FetchContent_MakeAvailable(wingetopt)
+
+    get_target_property(WINGETOPT_INCLUDE_DIRS wingetopt INCLUDE_DIRECTORIES)
+    set_target_properties(wingetopt PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${WINGETOPT_INCLUDE_DIRS})
+
     list(APPEND MEDIASOUP_DEPENDENCIES wingetopt)
 endif ()
+
+add_subdirectory(deps/libwebrtc)
+list(
+        APPEND MEDIASOUP_DEPENDENCIES
+        libwebrtc::libwebrtc
+)
 
 set(LIBRARY_NAMESPACE mediasoup)
 
 set(LIBRARY_TARGET libmediasoup-worker)
-add_library(${LIBRARY_TARGET} STATIC ${COMMON_SOURCES} #[[$<TARGET_OBJECTS:libwebrtc::libwebrtc>]])
+add_library(${LIBRARY_TARGET} STATIC ${COMMON_SOURCES})
 add_library(${LIBRARY_NAMESPACE}::${LIBRARY_TARGET} ALIAS ${LIBRARY_TARGET})
 
 set_target_properties(${LIBRARY_TARGET} PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADER}")

@@ -43,7 +43,7 @@ list(APPEND LIBWEBRTC_SOURCES
         libwebrtc/modules/congestion_controller/rtp/send_time_history.cc
         libwebrtc/modules/congestion_controller/rtp/transport_feedback_adapter.cc
         libwebrtc/modules/congestion_controller/rtp/control_handler.cc
-)
+        )
 
 set(TARGET_NAME libwebrtc)
 add_library(${TARGET_NAME} OBJECT ${LIBWEBRTC_SOURCES})
@@ -52,5 +52,5 @@ add_library(${TARGET_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 target_compile_options(${TARGET_NAME} PRIVATE ${TARGET_COMPILE_OPTIONS})
 target_compile_definitions(${TARGET_NAME} PRIVATE ${TARGET_COMPILE_DEFINITIONS})
 
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} libwebrtc  PRIVATE ${MEDIASOUP_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} nlohmann_json::nlohmann_json absl::strings)
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} libwebrtc PRIVATE ${MEDIASOUP_INCLUDE_DIRS})
+target_link_libraries(${TARGET_NAME} ${MEDIASOUP_DEPENDENCIES})

@@ -5,6 +5,6 @@ option(MEDIASOUP_BUILD_TESTS "Build mediasoup tests" OFF)
 
 if (MEDIASOUP_BUILD_TESTS)
     include(CTest)
-endif()
+endif ()
 
 add_subdirectory(worker)
