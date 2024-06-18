@@ -91,7 +91,15 @@ You can support mediasoup by [sponsoring][sponsor] it. Thanks!
 
 [ISC](./LICENSE)
 
-
+## CMake patch
+* Make a symbolic link to the original project directory:
+`ln -s path/to/orig/mediasoup/ ./mediasoup`
+* Make a symbolic link to the updated project directory:
+`ln -s path/to/updated/mediasoup/ ./updated_mediasoup`
+* Make patch:
+`diff -urN --exclude=cmake-build-* --exclude=.git* --exclude=.idea --exclude=README.md mediasoup updated_mediasoup > mediasoup.patch`
+* Use patch from project root directory:
+`patch -p1 < path/to/patch/mediasoup.patch`
 
 
 [mediasoup-banner]: /art/mediasoup-banner.png
