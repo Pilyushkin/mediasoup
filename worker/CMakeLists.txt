@@ -183,14 +183,17 @@ include(FetchContent)
 set(OPENSSL_USE_STATIC_LIBS ON)
 find_package(OpenSSL 3 REQUIRED)
 
-set(NLOHMANN_JSON_URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz CACHE STRING "nlohmann json url")
-message(STATUS "Nlohmann json url: ${NLOHMANN_JSON_URL}")
-FetchContent_Declare(
-        nlohmann_json
-        URL ${NLOHMANN_JSON_URL}
-        DOWNLOAD_NAME nlohmann_json-3.10.5.zip
-        FIND_PACKAGE_ARGS NAMES nlohmann_json 3.10
-)
+if (NOT TARGET nlohmann_json)
+    set(NLOHMANN_JSON_URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz CACHE STRING "nlohmann json url")
+    message(STATUS "Nlohmann json url: ${NLOHMANN_JSON_URL}")
+    FetchContent_Declare(
+            nlohmann_json
+            URL ${NLOHMANN_JSON_URL}
+            DOWNLOAD_NAME nlohmann_json-3.10.5.zip
+            FIND_PACKAGE_ARGS NAMES nlohmann_json 3.10
+    )
+    FetchContent_MakeAvailable(nlohmann_json)
+endif()
 
 set(LIBUV_URL
         https://dist.libuv.org/dist/v1.44.2/libuv-v1.44.2.tar.gz
@@ -240,7 +243,6 @@ FetchContent_Declare(
 
 
 FetchContent_MakeAvailable(
-        nlohmann_json
         libuv
         libsrtp2
         usrsctp
